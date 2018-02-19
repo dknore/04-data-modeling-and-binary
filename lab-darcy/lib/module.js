@@ -2,7 +2,11 @@
 
 const fs = require('fs');
 
-function BitmapTransformer(inputFilePath, outputFilePath, transform) {
+let inputFilePath = `${__dirname}/test/assets/blob.bmp`;
+let outputFilePath = `${__dirname}/test/assets/newAssets/newBlob.bmp`;
+let transformCommand = 'mirror';
+
+function BitmapTransformer(inputFilePath, outputFilePath, transformCommand) {
 
     fs.readFile(inputFilePath, (err, data) => {
         if (err) return console.error(err);
@@ -22,42 +26,45 @@ function BitmapTransformer(inputFilePath, outputFilePath, transform) {
         }
         console.log(bitmap);
 
-        const transformImage = (transform) => {
-            if (transform !== undefined) {
+        const transformImage = (transformCommand) => {
 
-                if (transform === 'mirror') {
+            if (transformCommand !== undefined) {
+
+                if (transformCommand === 'mirror') {
                     let mirrorImage = [];
 
                     for (let i = bitmap.pixelArray.length - 1; i > 0; i--) {
                         mirrorImage.push(bitmap.pixelArray[i]);
                     }
                     let newData = data.slice(0, bitmap.offsetToPixelArray) + mirrorImage;
-                    return newData;
-                }
-                fs.writeFile(outputFilePath, newData, err => {
-                    if (err) return console.log(err)
-                })
+
+                    fs.writeFile(outputFilePath, newData, err => {
+                        if (err) return console.log(err)
+                    })
+                };
+
+                // if (transformCommand === 'grayScale') {
+                //         let grayScale = [];
+                //         console.log('bitmap pixel array=', bitmap.pixelArray.length);
+                //         for (let i = bitmap.pixelArray.length - 1; i > 0; i--) {
+                //                 grayScale.push(bitmap.pixelArray[i]);
+                //             }
+                //             console.log('data=', data);
+
+                //             let newData = data.slice(0, bitmap.offsetToPixelArray) + grayScale;
+                //             return newData;
+                //         }
+                //     }
+                // }
+
             }
-            let newData = transformImage(transform);
-
-            // if (transform === 'grayScale') {
-            //         let grayScale = [];
-            //         console.log('bitmap pixel array=', bitmap.pixelArray.length);
-            //         for (let i = bitmap.pixelArray.length - 1; i > 0; i--) {
-            //                 grayScale.push(bitmap.pixelArray[i]);
-            //             }
-            //             console.log('data=', data);
-
-            //             let newData = data.slice(0, bitmap.offsetToPixelArray) + grayScale;
-            //             return newData;
-            //         }
-            //     }
-            // }
         }
-        BitmapTransformer(inputFilePath, outputFilePath, transform);
+        transformImage(transformCommand);
+
     })
 }
+BitmapTransformer(inputFilePath, outputFilePath, transformCommand);
 
 module.exports = {};
 module.exports.BitmapTransformer = BitmapTransformer;
-module.exports.transformImage = transformImage;
+// module.exports.transformImage = transformImage;
